@@ -1,0 +1,3 @@
+﻿<Project>
+  <Import Project="..\build\battleships_api.props" />
+</Project>
