@@ -30,3 +30,9 @@ C:\Users\Just_\repos\battleships_api\battleships_api\obj\Debug\net7.0\refint\bat
 C:\Users\Just_\repos\battleships_api\battleships_api\obj\Debug\net7.0\battleships_api.pdb
 C:\Users\Just_\repos\battleships_api\battleships_api\obj\Debug\net7.0\battleships_api.genruntimeconfig.cache
 C:\Users\Just_\repos\battleships_api\battleships_api\obj\Debug\net7.0\ref\battleships_api.dll
+C:\Users\Just_\repos\battleships_api\battleships_api\obj\Debug\net7.0\battleships_api.MvcApplicationPartsAssemblyInfo.cs
+C:\Users\Just_\repos\battleships_api\battleships_api\bin\Debug\net7.0\Microsoft.AspNetCore.OpenApi.dll
+C:\Users\Just_\repos\battleships_api\battleships_api\bin\Debug\net7.0\Microsoft.OpenApi.dll
+C:\Users\Just_\repos\battleships_api\battleships_api\bin\Debug\net7.0\Swashbuckle.AspNetCore.Swagger.dll
+C:\Users\Just_\repos\battleships_api\battleships_api\bin\Debug\net7.0\Swashbuckle.AspNetCore.SwaggerGen.dll
+C:\Users\Just_\repos\battleships_api\battleships_api\bin\Debug\net7.0\Swashbuckle.AspNetCore.SwaggerUI.dll
