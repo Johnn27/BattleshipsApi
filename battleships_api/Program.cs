@@ -9,6 +9,7 @@ builder.Services.AddDbContext<BattleshipDb>(opt => opt.UseInMemoryDatabase("Batt
 builder.Services.AddDbContext<BoardDb>(opt => opt.UseInMemoryDatabase("BattleshipApiDb"));
 builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 var app = builder.Build();
+BattleshipController battleshipController = new BattleshipController();
 
 if(app.Environment.IsDevelopment()){
     app.UseSwagger();
@@ -18,6 +19,34 @@ if(app.Environment.IsDevelopment()){
 app.MapGet("/battleships", async (BattleshipDb db) =>
     await db.Battleships.ToListAsync());
 
+
+app.MapPost("/newbattleships", async (Battleship ship, BattleshipDb db, BoardDb boardDb) =>
+{
+    if (await boardDb.Boards.FirstAsync() is Board board)
+    {
+        if(battleshipController.ShipOutOfRange(ship, board)){
+            return Results.BadRequest("Ship location is out of range, please try again");
+        }
+        if(battleshipController.ShipAlreadyExists(ship, board.BattleShips)){
+            return Results.BadRequest("Existing ship already exists, please try again");
+        }   
+        db.Battleships.Add(ship);
+        board.BattleShips.Add(ship);
+        await boardDb.SaveChangesAsync();
+        await db.SaveChangesAsync();
+
+        return Results.Created($"/todoitems/{ship.Id}", ship);
+    }
+    return Results.NotFound();
+});
+
+app.MapPost("/board", async (Board board, BoardDb db) =>
+{
+    db.Boards.Add(board);
+    await db.SaveChangesAsync();
+
+    return Results.Created($"/board/{board.Id}", board);
+});
 
 app.MapPost("/battleships", async (Battleship ship, BattleshipDb db) =>
 {

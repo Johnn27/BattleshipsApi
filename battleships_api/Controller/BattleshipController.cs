@@ -68,7 +68,7 @@ public class BattleshipController {
     /// </summary>
     public bool ShipOutOfRange(Battleship ship, Board board){
         return ship.xLoc >= board.BoardLength || ship.yLoc >= board.BoardLength;
-    }
+    } //TODO check if ship sticks out of board verticlaly or horizontally
 
 
 }
