@@ -5,5 +5,5 @@ class BoardDb : DbContext
     public BoardDb(DbContextOptions<BoardDb> options)
         : base(options) { }
 
-    public DbSet<Board> Todos => Set<Board>();
+    public DbSet<Board> Boards => Set<Board>();
 }
