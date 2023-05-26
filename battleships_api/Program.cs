@@ -1,9 +1,19 @@
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.OpenApi;
 
 var builder = WebApplication.CreateBuilder(args);
-builder.Services.AddDbContext<TodoDb>(opt => opt.UseInMemoryDatabase("TodoList"));
+builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddSwaggerGen();
+builder.Services.AddDbContext<TodoDb>(opt => opt.UseInMemoryDatabase("BattleshipApiDb"));
+builder.Services.AddDbContext<BattleshipDb>(opt => opt.UseInMemoryDatabase("BattleshipApiDb"));
+builder.Services.AddDbContext<BoardDb>(opt => opt.UseInMemoryDatabase("BattleshipApiDb"));
 builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 var app = builder.Build();
+
+if(app.Environment.IsDevelopment()){
+    app.UseSwagger();
+    app.UseSwaggerUI();
+}
 
 app.MapGet("/todoitems", async (TodoDb db) =>
     await db.Todos.ToListAsync());
@@ -47,7 +57,6 @@ app.MapDelete("/todoitems/{id}", async (int id, TodoDb db) =>
         await db.SaveChangesAsync();
         return Results.Ok(todo);
     }
-
     return Results.NotFound();
 });
 
