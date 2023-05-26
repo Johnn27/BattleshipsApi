@@ -21,7 +21,7 @@ public class BattleshipController {
                     return true;
                 }
             }
-            else{ //increment xLoc as it's horizontal
+            else { //increment xLoc as it's horizontal
                 if(existingShip.xLoc + i == newXLoc && existingShip.yLoc == newYLoc){
                     return true;
                 }
@@ -42,7 +42,7 @@ public class BattleshipController {
         int newYLoc = newShip.yLoc;
         foreach(Battleship existingShip in battleShips)
         {
-            //Check all tiles the new ship will occupy and check for overlap
+            //Check all "tiles" the new ship will occupy and check for overlap
             for(int i = 0; i < newShip.ShipLength; i++){ //go through n size of ship
                 if(newShip.IsVertical){
                     // Increment yLoc of new ship since it's vertical
@@ -51,9 +51,8 @@ public class BattleshipController {
                         return true;
                     }
                 }
-                else
-                {
-                    // Increment yLoc of new ship since it's horiztonal
+                else {
+                    // Increment xLoc of new ship since it's horiztonal
                     if(CoordinateContainsShip(newXLoc+i, newYLoc, existingShip)){
                         return true;
                     }
@@ -64,11 +63,29 @@ public class BattleshipController {
     }
 
     /// <summary>
-    /// Check if ship x or y location is out of board length (board is assumed as square) 
+    /// Check if ship x or y location is out of board length (board is assumed as square)
+    /// Goes through each "tile" the ship occupies (along the ship length) to check out of bounds
     /// </summary>
     public bool ShipOutOfRange(Battleship ship, Board board){
-        return ship.xLoc >= board.BoardLength || ship.yLoc >= board.BoardLength;
-    } //TODO check if ship sticks out of board verticlaly or horizontally
+        if(ship.xLoc >= board.BoardLength || ship.yLoc >= board.BoardLength){
+            return true;
+        }
+        for(int i = 1; i < ship.ShipLength; i++){ //go through each other "tile" the ship occupies
+            if(ship.IsVertical){
+                // Increment yLoc of ship since it's vertical
+                if(ship.yLoc + i >= board.BoardLength){
+                    return true;
+                }
+            }
+            else {
+                // Increment xLoc of ship since it's horiztonal
+                if(ship.xLoc + i >= board.BoardLength){
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
 
 
 }
