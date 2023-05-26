@@ -1,0 +1,11 @@
+{
+  "Version": 1,
+  "Hash": "rTXd7hJVh7/S+wNTkSUxwGTdCFVswT6yblJucoqkr5M=",
+  "Source": "BattleshipsApi",
+  "BasePath": "_content/BattleshipsApi",
+  "Mode": "Default",
+  "ManifestType": "Build",
+  "ReferencedProjectsConfiguration": [],
+  "DiscoveryPatterns": [],
+  "Assets": []
+}
