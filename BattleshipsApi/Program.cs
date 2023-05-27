@@ -13,7 +13,10 @@ BattleshipController battleshipController = new BattleshipController();
 
 if(app.Environment.IsDevelopment()){
     app.UseSwagger();
-    app.UseSwaggerUI();
+    app.UseSwaggerUI(c => 
+    {
+        c.RoutePrefix = "swagger"; //default page to swagger
+    });
 }
 
 app.MapPost("/CreateBoard", async (Board board, BoardDb db) =>
