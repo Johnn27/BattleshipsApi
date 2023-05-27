@@ -82,5 +82,19 @@ public class BattleshipsControllerTests
 
         bool result = _controllerUnderTest.ShipAlreadyExists(newShip, _battleshipsInBoard);
         Assert.IsFalse(result);
+    } 
+    [Test]
+    public void ShipOutOfRange_Ship_Location_Is_Beyond_Board_Length()
+    {
+        Battleship newShip = new Battleship(){
+            Id = 1,
+            IsVertical = true,
+            xLoc = 10,
+            yLoc = 2,
+            ShipLength = 2           
+        };
+
+        bool result = _controllerUnderTest.ShipOutOfRange(newShip, _board);
+        Assert.IsTrue(result);
     }    
 }
