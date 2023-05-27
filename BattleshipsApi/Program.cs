@@ -16,11 +16,18 @@ if(app.Environment.IsDevelopment()){
     app.UseSwaggerUI();
 }
 
-app.MapGet("/battleships", async (BattleshipDb db) =>
+app.MapPost("/CreateBoard", async (Board board, BoardDb db) =>
+{
+    db.Boards.Add(board);
+    await db.SaveChangesAsync();
+
+    return Results.Created($"/board/{board.Id}", board);
+});
+
+app.MapGet("/AllBattleships", async (BattleshipDb db) =>
     await db.Battleships.ToListAsync());
 
-
-app.MapPost("/newbattleships", async (Battleship ship, BattleshipDb db, BoardDb boardDb) =>
+app.MapPost("/NewBattleship", async (Battleship ship, BattleshipDb db, BoardDb boardDb) =>
 {
     if (await boardDb.Boards.FirstAsync() is Board board)
     {
@@ -40,7 +47,7 @@ app.MapPost("/newbattleships", async (Battleship ship, BattleshipDb db, BoardDb 
     return Results.NotFound();
 });
 
-app.MapPost("/board", async (Board board, BoardDb db) =>
+app.MapPost("/FireAtBattleship", async (Board board, BoardDb db) =>
 {
     db.Boards.Add(board);
     await db.SaveChangesAsync();
@@ -48,15 +55,27 @@ app.MapPost("/board", async (Board board, BoardDb db) =>
     return Results.Created($"/board/{board.Id}", board);
 });
 
-app.MapPost("/battleships", async (Battleship ship, BattleshipDb db) =>
+app.MapDelete("/ClearBoardsAndBattleships", async  (BattleshipDb db, BoardDb boardDb) =>
 {
-    db.Battleships.Add(ship);
-    await db.SaveChangesAsync();
-
-    return Results.Created($"/todoitems/{ship.Id}", ship);
+    if (await db.Battleships.ToListAsync() is List<Battleship> ships)
+    {
+        foreach(Battleship ship in ships){
+        db.Battleships.Remove(ship);
+        await db.SaveChangesAsync();
+        }        
+    }
+    if (await boardDb.Boards.ToListAsync() is List<Board> boards)
+    {
+        foreach(Board board in boards){
+        boardDb.Boards.Remove(board);
+        await db.SaveChangesAsync();
+        }
+        return Results.Ok();
+    }    
+    return Results.NotFound();
 });
 
-app.MapDelete("/battleships", async  (BattleshipDb db) =>
+app.MapDelete("/ClearBattleships", async  (BattleshipDb db) =>
 {
     if (await db.Battleships.ToListAsync() is List<Battleship> ships)
     {
@@ -69,25 +88,12 @@ app.MapDelete("/battleships", async  (BattleshipDb db) =>
     return Results.NotFound();
 });
 
-app.MapGet("/todoitems", async (TodoDb db) =>
-    await db.Todos.ToListAsync());
-
-app.MapGet("/todoitems/complete", async (TodoDb db) =>
-    await db.Todos.Where(t => t.IsComplete).ToListAsync());
-
 app.MapGet("/todoitems/{id}", async (int id, TodoDb db) =>
     await db.Todos.FindAsync(id)
         is Todo todo
             ? Results.Ok(todo)
             : Results.NotFound());
 
-app.MapPost("/todoitems", async (Todo todo, TodoDb db) =>
-{
-    db.Todos.Add(todo);
-    await db.SaveChangesAsync();
-
-    return Results.Created($"/todoitems/{todo.Id}", todo);
-});
 
 app.MapPut("/todoitems/{id}", async (int id, Todo inputTodo, TodoDb db) =>
 {
@@ -101,17 +107,6 @@ app.MapPut("/todoitems/{id}", async (int id, Todo inputTodo, TodoDb db) =>
     await db.SaveChangesAsync();
 
     return Results.NoContent();
-});
-
-app.MapDelete("/todoitems/{id}", async (int id, TodoDb db) =>
-{
-    if (await db.Todos.FindAsync(id) is Todo todo)
-    {
-        db.Todos.Remove(todo);
-        await db.SaveChangesAsync();
-        return Results.Ok(todo);
-    }
-    return Results.NotFound();
 });
 
 app.Run();
