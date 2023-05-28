@@ -1,10 +1,8 @@
 using Microsoft.EntityFrameworkCore;
-using Microsoft.AspNetCore.OpenApi;
 
 var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
-builder.Services.AddDbContext<TodoDb>(opt => opt.UseInMemoryDatabase("BattleshipApiDb"));
 builder.Services.AddDbContext<BattleshipDb>(opt => opt.UseInMemoryDatabase("BattleshipApiDb"));
 builder.Services.AddDbContext<BoardDb>(opt => opt.UseInMemoryDatabase("BattleshipApiDb"));
 builder.Services.AddDatabaseDeveloperPageExceptionFilter();
@@ -19,45 +17,75 @@ if(app.Environment.IsDevelopment()){
     });
 }
 
-app.MapPost("/CreateBoard", async (Board board, BoardDb db) =>
+app.MapPost("/CreateBoard", async (BoardDb db) =>
 {
+    Board board = new Board();
     db.Boards.Add(board);
     await db.SaveChangesAsync();
 
-    return Results.Created($"/board/{board.Id}", board);
+    return Results.Created($"Created board of length {board.BoardLength}", board);
 });
 
 app.MapGet("/AllBattleships", async (BattleshipDb db) =>
     await db.Battleships.ToListAsync());
 
-app.MapPost("/NewBattleship", async (Battleship ship, BattleshipDb db, BoardDb boardDb) =>
+//Places battleship, check if location is valid, returns 200 Success created if battleship is placed
+// else returns Bad request if invalid placement
+app.MapPost("/PlaceBattleship", async ( int xLocation, int yLocation, int shipLength, bool isVertical, BattleshipDb db, BoardDb boardDb) =>
 {
+    if(shipLength <= 0){
+        return Results.BadRequest("Please enter a ship length greater than 0");
+    }
+
+    //Create a board if not exists
+    if(boardDb.Boards.Count() == 0){
+        boardDb.Boards.Add(new Board());
+        boardDb.SaveChanges();
+    }
+
     if (await boardDb.Boards.FirstAsync() is Board board)
     {
+        Battleship ship = new Battleship(){
+            xLoc = xLocation, yLoc = yLocation, IsVertical = isVertical, ShipLength = shipLength, BoardId = board.Id
+        };
+
         if(battleshipController.ShipOutOfRange(ship, board)){
             return Results.BadRequest("Ship location is out of range, please try again");
         }
-        if(battleshipController.ShipAlreadyExists(ship, board.BattleShips)){
+        List<Battleship> battleShipsOnBoard = db.Battleships.Where(i => board.Id == i.BoardId).ToList();
+        if(battleshipController.ShipAlreadyExists(ship, battleShipsOnBoard)){
             return Results.BadRequest("Existing ship already exists, please try again");
         }   
-        db.Battleships.Add(ship);
-        board.BattleShips.Add(ship);
-        await boardDb.SaveChangesAsync();
-        await db.SaveChangesAsync();
 
-        return Results.Created($"/todoitems/{ship.Id}", ship);
+        db.Battleships.Add(ship);        
+        db.SaveChanges();
+
+        return Results.Created($"Battleship has been placed", ship);
     }
     return Results.NotFound();
 });
 
-app.MapPost("/FireAtBattleship", async (Board board, BoardDb db) =>
-{
-    db.Boards.Add(board);
-    await db.SaveChangesAsync();
+// Fires at battleship given the location, checks if location is valid
+app.MapPost("/FireAtBattleship", async (int xLoc, int yLoc, BoardDb boardDb, BattleshipDb db) =>
+{    
+    if(battleshipController.LocationOutOfRange(xLoc, yLoc)){
+        return Results.BadRequest("Invalid Location, please enter a non-zero location");
+    }
+    if (await boardDb.Boards.FirstAsync() is Board board)
+    {
+        List<Battleship> battleShipsOnBoard = db.Battleships.Where(i => board.Id == i.BoardId).ToList();
+        if(battleshipController.CoordinateContainsShip(xLoc, yLoc, battleShipsOnBoard))
+        {
+            //TODO: Confirm with client battleship is removed from board after hit
+            return Results.Ok("Ship has been hit in current location!");
+        }
+        
+    }
 
-    return Results.Created($"/board/{board.Id}", board);
+    return Results.NotFound("No ship found in location.");
 });
 
+// Delete all boards and battleships
 app.MapDelete("/ClearBoardsAndBattleships", async  (BattleshipDb db, BoardDb boardDb) =>
 {
     if (await db.Battleships.ToListAsync() is List<Battleship> ships)
@@ -78,6 +106,7 @@ app.MapDelete("/ClearBoardsAndBattleships", async  (BattleshipDb db, BoardDb boa
     return Results.NotFound();
 });
 
+//Delete all battleships
 app.MapDelete("/ClearBattleships", async  (BattleshipDb db) =>
 {
     if (await db.Battleships.ToListAsync() is List<Battleship> ships)
@@ -89,27 +118,6 @@ app.MapDelete("/ClearBattleships", async  (BattleshipDb db) =>
         return Results.Ok();
     }
     return Results.NotFound();
-});
-
-app.MapGet("/todoitems/{id}", async (int id, TodoDb db) =>
-    await db.Todos.FindAsync(id)
-        is Todo todo
-            ? Results.Ok(todo)
-            : Results.NotFound());
-
-
-app.MapPut("/todoitems/{id}", async (int id, Todo inputTodo, TodoDb db) =>
-{
-    var todo = await db.Todos.FindAsync(id);
-
-    if (todo is null) return Results.NotFound();
-
-    todo.Name = inputTodo.Name;
-    todo.IsComplete = inputTodo.IsComplete;
-
-    await db.SaveChangesAsync();
-
-    return Results.NoContent();
 });
 
 app.Run();

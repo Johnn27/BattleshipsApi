@@ -115,3 +115,11 @@ C:\Users\Just_\repos\BattleshipsApi\BattleshipsApi.Tests\bin\Debug\net7.0\zh-Han
 C:\Users\Just_\repos\BattleshipsApi\BattleshipsApi.Tests\bin\Debug\net7.0\zh-Hant\Microsoft.TestPlatform.CrossPlatEngine.resources.dll
 C:\Users\Just_\repos\BattleshipsApi\BattleshipsApi.Tests\bin\Debug\net7.0\zh-Hant\Microsoft.VisualStudio.TestPlatform.Common.resources.dll
 C:\Users\Just_\repos\BattleshipsApi\BattleshipsApi.Tests\obj\Debug\net7.0\BattleshipsApi.Tests.genruntimeconfig.cache
+C:\Users\Just_\repos\BattleshipsApi\BattleshipsApi\BattleshipsApi.Tests\obj\Debug\net7.0\BattleshipsApi.Tests.csproj.AssemblyReference.cache
+C:\Users\Just_\repos\BattleshipsApi\BattleshipsApi\BattleshipsApi.Tests\obj\Debug\net7.0\BattleshipsApi.Tests.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\Just_\repos\BattleshipsApi\BattleshipsApi\BattleshipsApi.Tests\obj\Debug\net7.0\BattleshipsApi.Tests.AssemblyInfoInputs.cache
+C:\Users\Just_\repos\BattleshipsApi\BattleshipsApi\BattleshipsApi.Tests\obj\Debug\net7.0\BattleshipsApi.Tests.AssemblyInfo.cs
+C:\Users\Just_\repos\BattleshipsApi\BattleshipsApi\BattleshipsApi.Tests\obj\Debug\net7.0\BattleshipsApi.Tests.csproj.CoreCompileInputs.cache
+C:\Users\Just_\repos\BattleshipsApi\BattleshipsApi\BattleshipsApi.Tests\obj\Debug\net7.0\BattleshipsApi.Tests.dll
+C:\Users\Just_\repos\BattleshipsApi\BattleshipsApi\BattleshipsApi.Tests\obj\Debug\net7.0\refint\BattleshipsApi.Tests.dll
+C:\Users\Just_\repos\BattleshipsApi\BattleshipsApi\BattleshipsApi.Tests\obj\Debug\net7.0\BattleshipsApi.Tests.pdb

@@ -4,6 +4,25 @@ public class BattleshipController {
     }
 
     /// <summary>
+    /// Check if the given coordinate will intersect with any of the listed ships
+    /// Overloaded method, checks all ships on board if list of ships is passed in parameter
+    /// </summary>
+    /// <returns>
+    /// True if a spot is already occupied by any ship on the board
+    /// </returns>
+    public bool CoordinateContainsShip(int newXLoc, int newYLoc, List<Battleship> battleships)
+    {
+        foreach(Battleship existingShip in battleships)
+        {
+            // Check if the individual ship is contained in the x and y location
+            if(CoordinateContainsShip(newXLoc, newYLoc, existingShip)){
+                return true;
+            }
+        }
+        return false; // No overlap, co-ordinate does not contain ship
+    }
+
+    /// <summary>
     /// Check if the given coordinate will intersect with a ship
     /// Given a given x location and y location return if that given ship exists
     /// Used to check if a ship is "hit" or if the tile is already occupied
@@ -36,7 +55,7 @@ public class BattleshipController {
     /// <returns>
     /// True if a spot is already occupied by a ship
     /// </returns>
-    public bool ShipAlreadyExists(Battleship newShip, List<Battleship> battleShips)
+    public bool ShipAlreadyExists(Battleship newShip, ICollection<Battleship> battleShips)
     {
         int newXLoc = newShip.xLoc;
         int newYLoc = newShip.yLoc;
@@ -62,12 +81,17 @@ public class BattleshipController {
         return false;
     }
 
+    // Validate if location is non-zero
+    public bool LocationOutOfRange(int xLoc, int yLoc){
+        return xLoc < 0 || yLoc < 0;
+    }
+
     /// <summary>
     /// Check if ship x or y location is out of board length (board is assumed as square)
     /// Goes through each "tile" the ship occupies (along the ship length) to check out of bounds
     /// </summary>
     public bool ShipOutOfRange(Battleship ship, Board board){
-        if(ship.xLoc >= board.BoardLength || ship.yLoc >= board.BoardLength){
+        if(LocationOutOfRange(ship.xLoc, ship.yLoc) || ship.xLoc >= board.BoardLength || ship.yLoc >= board.BoardLength){
             return true;
         }
         for(int i = 1; i < ship.ShipLength; i++){ //go through each other "tile" the ship occupies
